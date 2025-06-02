@@ -11,10 +11,56 @@ const Contact: React.FC = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError('');
+
+    try {
+      const response = await fetch('https://formsubmit.co/paulodev.website@gmail.com', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          whatsapp: formData.whatsapp,
+          siteType: formData.siteType,
+          message: formData.message,
+          _subject: 'Novo contato do site!',
+          _template: 'table',
+          _captcha: 'false',
+          _next: 'https://pauloweb-dev.vercel.app/obrigado',
+          _autoresponse: 'Recebemos sua mensagem! Em breve entraremos em contato.',
+          _replyto: 'paulodev.website@gmail.com',
+          _format: 'plain'
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao enviar mensagem. Por favor, tente novamente.');
+      }
+
+      setIsSubmitted(true);
+      setFormData({
+        name: '',
+        whatsapp: '',
+        siteType: '',
+        message: '',
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao enviar mensagem. Por favor, tente novamente.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
@@ -85,8 +131,20 @@ const Contact: React.FC = () => {
                   <p>Obrigado pelo contato. Retornarei em breve.</p>
                 </motion.div>
               ) : null}
+
+              {error ? (
+                <motion.div 
+                  className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 rounded-lg p-4 mb-6"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <p className="font-medium">Erro ao enviar mensagem</p>
+                  <p>{error}</p>
+                </motion.div>
+              ) : null}
               
-              <form action="https://formsubmit.co/paulodev.website@gmail.com" method="POST">
+              <form onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
@@ -152,15 +210,6 @@ const Contact: React.FC = () => {
                     className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-300 dark:focus:ring-primary-800 focus:border-primary-500 dark:focus:border-primary-400 outline-none transition-all bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white resize-none"
                   ></textarea>
                 </div>
-
-                {/* FormSubmit hidden inputs */}
-                <input type="hidden" name="_subject" value="Novo contato do site!" />
-                <input type="hidden" name="_template" value="table" />
-                <input type="hidden" name="_captcha" value="false" />
-                <input type="hidden" name="_next" value="https://pauloweb-dev.vercel.app/obrigado" />
-                <input type="hidden" name="_autoresponse" value="Recebemos sua mensagem! Em breve entraremos em contato." />
-                <input type="hidden" name="_replyto" value="paulodev.website@gmail.com" />
-                <input type="hidden" name="_format" value="plain" />
                 
                 <button
                   type="submit"
@@ -223,5 +272,6 @@ const Contact: React.FC = () => {
   );
 };
 
-export default Contact;/ /   c o m m i t   a u t o r   c o r r e t o  
+export default Contact;
+
  
