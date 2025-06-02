@@ -17,45 +17,6 @@ const Contact: React.FC = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    const form = e.target as HTMLFormElement;
-    const formData = new FormData(form);
-    
-    fetch(form.action, {
-      method: 'POST',
-      body: formData
-    })
-    .then(response => {
-      if (response.ok) {
-        setIsSubmitted(true);
-        // Reset form after submission
-        form.reset();
-        setFormData({
-          name: '',
-          whatsapp: '',
-          siteType: '',
-          message: '',
-        });
-      } else {
-        throw new Error('Erro ao enviar formulário');
-      }
-    })
-    .catch(error => {
-      console.error('Erro:', error);
-      alert('Ocorreu um erro ao enviar o formulário. Por favor, tente novamente.');
-    })
-    .finally(() => {
-      setIsSubmitting(false);
-      // Reset success message after 5 seconds
-      setTimeout(() => {
-        setIsSubmitted(false);
-      }, 5000);
-    });
-  };
-
   const contactInfo = [
     {
       icon: <Phone className="h-5 w-5 text-primary-500" />,
@@ -125,7 +86,7 @@ const Contact: React.FC = () => {
                 </motion.div>
               ) : null}
               
-              <form onSubmit={handleSubmit} action="https://formsubmit.co/el/activate/paulodev.website@gmail.com" method="POST">
+              <form action="https://formsubmit.co/paulodev.website@gmail.com" method="POST">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
@@ -196,7 +157,7 @@ const Contact: React.FC = () => {
                 <input type="hidden" name="_subject" value="Novo contato do site!" />
                 <input type="hidden" name="_template" value="table" />
                 <input type="hidden" name="_captcha" value="false" />
-                <input type="hidden" name="_next" value={window.location.origin} />
+                <input type="hidden" name="_next" value="https://pauloweb-dev.vercel.app/obrigado" />
                 <input type="hidden" name="_autoresponse" value="Recebemos sua mensagem! Em breve entraremos em contato." />
                 <input type="hidden" name="_replyto" value="paulodev.website@gmail.com" />
                 <input type="hidden" name="_format" value="plain" />
@@ -262,4 +223,5 @@ const Contact: React.FC = () => {
   );
 };
 
-export default Contact;
+export default Contact;/ /   c o m m i t   a u t o r   c o r r e t o  
+ 
