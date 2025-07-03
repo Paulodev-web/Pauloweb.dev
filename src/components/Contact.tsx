@@ -6,6 +6,7 @@ const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     whatsapp: '',
+    websiteUrl: '',
     siteType: '',
     message: '',
   });
@@ -33,6 +34,7 @@ const Contact: React.FC = () => {
         body: JSON.stringify({
           name: formData.name,
           whatsapp: formData.whatsapp,
+          websiteUrl: formData.websiteUrl,
           siteType: formData.siteType,
           message: formData.message,
           _subject: 'Novo contato do site!',
@@ -53,6 +55,7 @@ const Contact: React.FC = () => {
       setFormData({
         name: '',
         whatsapp: '',
+        websiteUrl: '',
         siteType: '',
         message: '',
       });
@@ -175,6 +178,21 @@ const Contact: React.FC = () => {
                     />
                   </div>
                 </div>
+
+                <div className="mb-6">
+                  <label htmlFor="websiteUrl" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                    URL do site ou @ do Instagram (opcional)
+                  </label>
+                  <input
+                    type="text"
+                    id="websiteUrl"
+                    name="websiteUrl"
+                    placeholder="https://exemplo.com.br ou @seuinstagram"
+                    value={formData.websiteUrl}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-300 dark:focus:ring-primary-800 focus:border-primary-500 dark:focus:border-primary-400 outline-none transition-all bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
+                  />
+                </div>
                 
                 <div className="mb-6">
                   <label htmlFor="siteType" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
@@ -189,8 +207,8 @@ const Contact: React.FC = () => {
                     className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-300 dark:focus:ring-primary-800 focus:border-primary-500 dark:focus:border-primary-400 outline-none transition-all bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
                   >
                     <option value="">Selecione uma opção</option>
-                    <option value="landing-page">Landing Page</option>
-                    <option value="site-profissional">Site Profissional</option>
+                    <option value="landing-page">Landing Page Express</option>
+                    <option value="site-institucional">Site Institucional</option>
                     <option value="loja-simples">Loja Simples</option>
                     <option value="outro">Outro (especifique na mensagem)</option>
                   </select>

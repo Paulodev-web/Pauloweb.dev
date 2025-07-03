@@ -37,11 +37,17 @@ const Hero: React.FC = () => {
         >
           <div className="w-full md:w-1/2 mb-12 md:mb-0 md:pr-12">
             <motion.div variants={item} className="mb-4">
+              <div className="flex items-center mb-4">
+                <h2 className="text-lg font-medium text-primary-600 dark:text-primary-400">
+                  Olá, eu sou Paulo Ricardo 👋
+                </h2>
+              </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4">
                 Desenvolvedor de <span className="text-primary">Sites que Convertem</span>
               </h1>
-              <p className="text-xl mb-8 max-w-xl">
-                Landing pages e sites profissionais para escalar negócios digitais com foco em performance e conversão.
+              <p className="text-xl mb-8 max-w-xl text-neutral-600 dark:text-neutral-300">
+                Estudante de Engenharia de Software especializado em criar landing pages e sites profissionais 
+                que transformam visitantes em clientes reais para o seu negócio.
               </p>
             </motion.div>
 
@@ -87,13 +93,31 @@ const Hero: React.FC = () => {
 
           <motion.div variants={item} className="w-full md:w-1/2">
             <div className="relative">
-              <div className="absolute -inset-4 md:-inset-6 bg-primary-500 rounded-full opacity-10 blur-xl"></div>
-              <div className="relative bg-muted rounded-full overflow-hidden aspect-square max-w-md mx-auto">
-                <img 
-                  src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
-                  alt="Paulo Ricardo" 
-                  className="w-full h-full object-cover"
-                />
+              {/* Background Effects */}
+              <div className="absolute -inset-4 md:-inset-6 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full opacity-20 blur-xl"></div>
+              <div className="absolute -inset-2 md:-inset-4 bg-gradient-to-tr from-primary-400 to-primary-500 rounded-full opacity-10 blur-lg"></div>
+              
+              {/* Photo Container */}
+              <div className="relative">
+                <div className="bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900 dark:to-primary-800 rounded-full p-2 max-w-md mx-auto">
+                  <div className="relative bg-white dark:bg-neutral-800 rounded-full overflow-hidden aspect-square w-full max-w-sm mx-auto">
+                    {/* High Quality Image */}
+                    <img 
+                      src="/imagemprofissional.jpg"
+                      alt="Paulo Ricardo - Desenvolvedor Web"
+                      className="w-full h-full object-cover"
+                      style={{
+                        objectPosition: 'center 25%',
+                        imageRendering: 'auto',
+                        filter: 'contrast(1.05) saturate(1.02)',
+                        WebkitBackfaceVisibility: 'hidden',
+                        backfaceVisibility: 'hidden'
+                      }}
+                      loading="eager"
+                      decoding="sync"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>

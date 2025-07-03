@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-scroll';
 import { Code, Heart, ExternalLink, Github, Linkedin, Twitter } from 'lucide-react';
+import { Link as RouterLink } from 'react-router-dom';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -94,6 +95,16 @@ const Footer: React.FC = () => {
               <span className="text-primary-400">Tailwind</span>
             </div>
           </div>
+        </div>
+
+        {/* Área do Admin */}
+        <div className="mt-8 pt-8 border-t border-gray-800 text-center">
+          <RouterLink
+            to="/login"
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+          >
+            Acessar Painel Administrativo
+          </RouterLink>
         </div>
       </div>
     </footer>
