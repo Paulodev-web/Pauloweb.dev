@@ -10,6 +10,7 @@ const Contact: React.FC = () => {
     siteType: '',
     message: '',
   });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState('');
@@ -24,27 +25,29 @@ const Contact: React.FC = () => {
     setIsSubmitting(true);
     setError('');
 
+    // Monta os dados em formato x-www-form-urlencoded
+    const formBody = new URLSearchParams({
+      name: formData.name,
+      whatsapp: formData.whatsapp,
+      websiteUrl: formData.websiteUrl,
+      siteType: formData.siteType,
+      message: formData.message,
+      _subject: 'Novo contato do site!',
+      _template: 'table',
+      _captcha: 'false',
+      _autoresponse: 'Recebemos sua mensagem! Em breve entraremos em contato.',
+      _replyto: 'paulodev.website@gmail.com',
+      _format: 'plain'
+    }).toString();
+
     try {
-      const response = await fetch('https://formsubmit.co/paulodev.website@gmail.com', {
+      const response = await fetch('https://formsubmit.co/ajax/paulodev.website@gmail.com', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
           'Accept': 'application/json'
         },
-        body: JSON.stringify({
-          name: formData.name,
-          whatsapp: formData.whatsapp,
-          websiteUrl: formData.websiteUrl,
-          siteType: formData.siteType,
-          message: formData.message,
-          _subject: 'Novo contato do site!',
-          _template: 'table',
-          _captcha: 'false',
-          _next: 'https://pauloweb-dev.vercel.app/obrigado',
-          _autoresponse: 'Recebemos sua mensagem! Em breve entraremos em contato.',
-          _replyto: 'paulodev.website@gmail.com',
-          _format: 'plain'
-        })
+        body: formBody
       });
 
       if (!response.ok) {
@@ -122,30 +125,6 @@ const Contact: React.FC = () => {
           >
             <div className="card bg-white dark:bg-neutral-800">
               <h3 className="text-2xl font-bold mb-6 text-neutral-900 dark:text-white">Envie uma mensagem</h3>
-              
-              {isSubmitted ? (
-                <motion.div 
-                  className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 rounded-lg p-4 mb-6"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <p className="font-medium">Mensagem enviada com sucesso!</p>
-                  <p>Obrigado pelo contato. Retornarei em breve.</p>
-                </motion.div>
-              ) : null}
-
-              {error ? (
-                <motion.div 
-                  className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 rounded-lg p-4 mb-6"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <p className="font-medium">Erro ao enviar mensagem</p>
-                  <p>{error}</p>
-                </motion.div>
-              ) : null}
               
               <form onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -286,6 +265,28 @@ const Contact: React.FC = () => {
           </motion.div>
         </div>
       </div>
+      {isSubmitted && (
+        <motion.div 
+          className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 rounded-lg p-4 mt-6"
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          transition={{ duration: 0.3 }}
+        >
+          <p className="font-medium">Mensagem enviada com sucesso!</p>
+          <p>Obrigado pelo contato. Retornarei em breve.</p>
+        </motion.div>
+      )}
+      {error && (
+        <motion.div 
+          className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 rounded-lg p-4 mt-6"
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          transition={{ duration: 0.3 }}
+        >
+          <p className="font-medium">Erro ao enviar mensagem</p>
+          <p>{error}</p>
+        </motion.div>
+      )}
     </section>
   );
 };
