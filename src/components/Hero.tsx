@@ -102,20 +102,25 @@ const Hero: React.FC = () => {
                 <div className="bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900 dark:to-primary-800 rounded-full p-2 max-w-md mx-auto">
                   <div className="relative bg-white dark:bg-neutral-800 rounded-full overflow-hidden aspect-square w-full max-w-sm mx-auto">
                     {/* High Quality Image */}
-                    <img 
-                      src="/imagemprofissional.jpg"
-                      alt="Paulo Ricardo - Desenvolvedor Web"
-                      className="w-full h-full object-cover"
-                      style={{
-                        objectPosition: 'center 25%',
-                        imageRendering: 'auto',
-                        filter: 'contrast(1.05) saturate(1.02)',
-                        WebkitBackfaceVisibility: 'hidden',
-                        backfaceVisibility: 'hidden'
-                      }}
-                      loading="eager"
-                      decoding="sync"
-                    />
+                    <picture>
+                      <source srcSet="/imagemprofissional.webp" type="image/webp" />
+                      <img 
+                        src="/imagemprofissional.jpg"
+                        alt="Paulo Ricardo - Desenvolvedor Web"
+                        className="w-full h-full object-cover"
+                        style={{
+                          objectPosition: 'center 25%',
+                          imageRendering: 'auto',
+                          filter: 'contrast(1.05) saturate(1.02)',
+                          WebkitBackfaceVisibility: 'hidden',
+                          backfaceVisibility: 'hidden'
+                        }}
+                        loading="lazy"
+                        decoding="async"
+                        width={400}
+                        height={400}
+                      />
+                    </picture>
                   </div>
                 </div>
               </div>
