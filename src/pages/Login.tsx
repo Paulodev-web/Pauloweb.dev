@@ -12,7 +12,7 @@ export default function Login() {
     e.preventDefault();
     if (username === 'pauloadm' && password === 'adm451239') {
       storageService.setAdminLoggedIn(true);
-      navigate('/admin');
+      navigate('/dashboard');
     } else {
       setError('Usuário ou senha inválidos');
     }

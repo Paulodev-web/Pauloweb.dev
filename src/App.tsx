@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Admin from './pages/Admin';
 import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
 import { storageService } from './services/storage';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -31,6 +32,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Admin />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
             </ProtectedRoute>
           }
         />

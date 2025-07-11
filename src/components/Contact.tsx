@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Phone, Mail, MapPin } from 'lucide-react';
+import { ContactService, CreateContactData } from '../services/supabase';
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +16,15 @@ const Contact: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState('');
 
+  // Ref para a mensagem de feedback
+  const feedbackRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if ((isSubmitted || error) && feedbackRef.current) {
+      feedbackRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [isSubmitted, error]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -25,34 +35,18 @@ const Contact: React.FC = () => {
     setIsSubmitting(true);
     setError('');
 
-    // Monta os dados em formato x-www-form-urlencoded
-    const formBody = new URLSearchParams({
-      name: formData.name,
-      whatsapp: formData.whatsapp,
-      websiteUrl: formData.websiteUrl,
-      siteType: formData.siteType,
-      message: formData.message,
-      _subject: 'Novo contato do site!',
-      _template: 'table',
-      _captcha: 'false',
-      _autoresponse: 'Recebemos sua mensagem! Em breve entraremos em contato.',
-      _replyto: 'paulodev.website@gmail.com',
-      _format: 'plain'
-    }).toString();
-
     try {
-      const response = await fetch('https://formsubmit.co/ajax/paulodev.website@gmail.com', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Accept': 'application/json'
-        },
-        body: formBody
-      });
+      // Preparar dados para o Supabase
+      const contactData: CreateContactData = {
+        name: formData.name,
+        whatsapp: formData.whatsapp,
+        website_url: formData.websiteUrl || undefined,
+        site_type: formData.siteType,
+        message: formData.message,
+      };
 
-      if (!response.ok) {
-        throw new Error('Erro ao enviar mensagem. Por favor, tente novamente.');
-      }
+      // Salvar no banco de dados
+      await ContactService.createContact(contactData);
 
       setIsSubmitted(true);
       setFormData({
@@ -267,6 +261,7 @@ const Contact: React.FC = () => {
       </div>
       {isSubmitted && (
         <motion.div 
+          ref={feedbackRef}
           className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 rounded-lg p-4 mt-6"
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
@@ -278,6 +273,7 @@ const Contact: React.FC = () => {
       )}
       {error && (
         <motion.div 
+          ref={feedbackRef}
           className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 rounded-lg p-4 mt-6"
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
