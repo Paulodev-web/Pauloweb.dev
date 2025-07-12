@@ -1,6 +1,5 @@
-// Configuração temporária do Supabase
-// Em produção, mova essas variáveis para um arquivo .env
-// RLS policies updated - 2025-07-12
+// Configuração do Supabase
+// Em produção, essas configurações são carregadas via variáveis de ambiente
 
 export const supabaseConfig = {
   url: 'https://brqtbvrzhsjoxdpgkbsw.supabase.co',
