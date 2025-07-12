@@ -1,15 +1,30 @@
 import { createClient } from '@supabase/supabase-js'
 import { supabaseConfig } from '../config/supabase-config'
 
+// DEBUG: Verificar configurações
+console.log('🔍 SUPABASE DEBUG:');
+console.log('ENV URL:', import.meta.env.VITE_SUPABASE_URL ? 'PRESENTE' : 'AUSENTE');
+console.log('ENV KEY:', import.meta.env.VITE_SUPABASE_ANON_KEY ? 'PRESENTE' : 'AUSENTE');
+console.log('CONFIG URL:', supabaseConfig.url ? 'PRESENTE' : 'AUSENTE');
+console.log('CONFIG KEY:', supabaseConfig.anonKey ? 'PRESENTE' : 'AUSENTE');
+
 // Usar variáveis de ambiente ou configuração do arquivo como fallback
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || supabaseConfig.url
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || supabaseConfig.anonKey
 
+console.log('🔧 USANDO:');
+console.log('URL Final:', supabaseUrl);
+console.log('KEY Final:', supabaseAnonKey ? `${supabaseAnonKey.substring(0, 10)}...` : 'AUSENTE');
+
 if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('❌ CONFIGURAÇÃO SUPABASE FALTANDO!');
   throw new Error('Missing Supabase configuration')
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+// DEBUG: Testar conexão
+console.log('📡 Cliente Supabase criado com sucesso');
 
 // Tipos para os dados do contato
 export interface Contact {
@@ -36,6 +51,8 @@ export interface CreateContactData {
 export class ContactService {
   // Criar um novo contato
   static async createContact(data: CreateContactData): Promise<Contact> {
+    console.log('🚀 INICIANDO CRIAÇÃO DE CONTATO:', data);
+    
     const { data: contact, error } = await supabase
       .from('contacts')
       .insert([data])
@@ -43,10 +60,17 @@ export class ContactService {
       .single()
 
     if (error) {
-      console.error('Erro ao criar contato:', error)
+      console.error('❌ ERRO DETALHADO:', {
+        message: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint,
+        data: data
+      });
       throw new Error('Erro ao enviar mensagem. Tente novamente.')
     }
 
+    console.log('✅ CONTATO CRIADO COM SUCESSO:', contact);
     return contact
   }
 
