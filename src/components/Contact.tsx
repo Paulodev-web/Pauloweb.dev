@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Phone, Mail, MapPin } from 'lucide-react';
 import { ContactService, CreateContactData } from '../services/supabase';
-import { testDirectInsert, supabaseDebug } from '../services/supabase-debug';
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -36,19 +35,9 @@ const Contact: React.FC = () => {
     setIsSubmitting(true);
     setError('');
 
-    console.log('🚀 Iniciando envio do formulário...');
-    console.log('Dados do formulário:', formData);
-
     try {
-      // Primeiro teste: inserção direta com debug
-      console.log('🧪 Teste 1: Inserção direta com debug');
-      const debugResult = await testDirectInsert();
-      console.log('Resultado do teste direto:', debugResult);
-
-      // Segundo teste: usando o cliente normal
-      console.log('🧪 Teste 2: Usando cliente debug diretamente');
-      
-      const contactData = {
+      // Preparar dados para o Supabase
+      const contactData: CreateContactData = {
         name: formData.name,
         whatsapp: formData.whatsapp,
         website_url: formData.websiteUrl || undefined,
@@ -56,25 +45,8 @@ const Contact: React.FC = () => {
         message: formData.message,
       };
 
-      console.log('Dados preparados:', contactData);
-
-      const { data, error } = await supabaseDebug
-        .from('contacts')
-        .insert([contactData])
-        .select()
-        .single();
-
-      if (error) {
-        console.error('❌ Erro detalhado:', {
-          message: error.message,
-          code: error.code,
-          details: error.details,
-          hint: error.hint
-        });
-        throw new Error(`Erro Supabase: ${error.message}`);
-      }
-
-      console.log('✅ Sucesso! Dados salvos:', data);
+      // Salvar no banco de dados
+      await ContactService.createContact(contactData);
 
       setIsSubmitted(true);
       setFormData({
@@ -85,7 +57,6 @@ const Contact: React.FC = () => {
         message: '',
       });
     } catch (err) {
-      console.error('❌ Erro no catch:', err);
       setError(err instanceof Error ? err.message : 'Erro ao enviar mensagem. Por favor, tente novamente.');
     } finally {
       setIsSubmitting(false);
@@ -262,56 +233,74 @@ const Contact: React.FC = () => {
               <div className="space-y-6 mb-8">
                 {contactInfo.map((item, index) => (
                   <a 
-                    key={index} 
+                    key={index}
                     href={item.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-start hover:text-primary-500 transition-colors"
+                    className="flex items-center space-x-4 p-4 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
                   >
-                    <div className="bg-primary-50 dark:bg-primary-900/20 p-3 rounded-lg mr-4">
+                    <div className="flex-shrink-0">
                       {item.icon}
                     </div>
                     <div>
-                      <p className="font-medium text-neutral-900 dark:text-white">{item.title}</p>
-                      <p className="text-neutral-600 dark:text-neutral-300">{item.info}</p>
+                      <h4 className="font-semibold text-neutral-900 dark:text-white">
+                        {item.title}
+                      </h4>
+                      <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                        {item.info}
+                      </p>
                     </div>
                   </a>
                 ))}
               </div>
-              
-              <div>
-                <h4 className="font-medium mb-3 text-neutral-900 dark:text-white">Horário de atendimento:</h4>
-                <p className="text-neutral-600 dark:text-neutral-300">Segunda a Sexta: 9h às 18h</p>
-                <p className="text-neutral-600 dark:text-neutral-300">Sábado: 9h às 12h</p>
+
+              <div className="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
+                <h4 className="font-semibold text-neutral-900 dark:text-white mb-2">
+                  Horário de atendimento:
+                </h4>
+                <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                  Segunda a Sexta: 9h às 18h
+                </p>
+                <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                  Sábado: 9h às 12h
+                </p>
               </div>
             </div>
           </motion.div>
         </div>
+
+        {/* Feedback Messages */}
+        {(isSubmitted || error) && (
+          <motion.div 
+            ref={feedbackRef}
+            className="mt-8 text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            {isSubmitted && (
+              <div className="inline-flex items-center px-6 py-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+                <svg className="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span className="text-green-700 dark:text-green-300 font-medium">
+                  Mensagem enviada com sucesso! Em breve entraremos em contato.
+                </span>
+              </div>
+            )}
+            {error && (
+              <div className="inline-flex items-center px-6 py-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+                <svg className="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                <span className="text-red-700 dark:text-red-300 font-medium">
+                  {error}
+                </span>
+              </div>
+            )}
+          </motion.div>
+        )}
       </div>
-      {isSubmitted && (
-        <motion.div 
-          ref={feedbackRef}
-          className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 rounded-lg p-4 mt-6"
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          transition={{ duration: 0.3 }}
-        >
-          <p className="font-medium">Mensagem enviada com sucesso!</p>
-          <p>Obrigado pelo contato. Retornarei em breve.</p>
-        </motion.div>
-      )}
-      {error && (
-        <motion.div 
-          ref={feedbackRef}
-          className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 rounded-lg p-4 mt-6"
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          transition={{ duration: 0.3 }}
-        >
-          <p className="font-medium">Erro ao enviar mensagem</p>
-          <p>{error}</p>
-        </motion.div>
-      )}
     </section>
   );
 };
