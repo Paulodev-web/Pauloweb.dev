@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Phone, Mail, MapPin } from 'lucide-react';
 import { ContactService, CreateContactData } from '../services/supabase';
+import { testDirectInsert, supabaseDebug } from '../services/supabase-debug';
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -35,9 +36,19 @@ const Contact: React.FC = () => {
     setIsSubmitting(true);
     setError('');
 
+    console.log('🚀 Iniciando envio do formulário...');
+    console.log('Dados do formulário:', formData);
+
     try {
-      // Preparar dados para o Supabase
-      const contactData: CreateContactData = {
+      // Primeiro teste: inserção direta com debug
+      console.log('🧪 Teste 1: Inserção direta com debug');
+      const debugResult = await testDirectInsert();
+      console.log('Resultado do teste direto:', debugResult);
+
+      // Segundo teste: usando o cliente normal
+      console.log('🧪 Teste 2: Usando cliente debug diretamente');
+      
+      const contactData = {
         name: formData.name,
         whatsapp: formData.whatsapp,
         website_url: formData.websiteUrl || undefined,
@@ -45,8 +56,25 @@ const Contact: React.FC = () => {
         message: formData.message,
       };
 
-      // Salvar no banco de dados
-      await ContactService.createContact(contactData);
+      console.log('Dados preparados:', contactData);
+
+      const { data, error } = await supabaseDebug
+        .from('contacts')
+        .insert([contactData])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('❌ Erro detalhado:', {
+          message: error.message,
+          code: error.code,
+          details: error.details,
+          hint: error.hint
+        });
+        throw new Error(`Erro Supabase: ${error.message}`);
+      }
+
+      console.log('✅ Sucesso! Dados salvos:', data);
 
       setIsSubmitted(true);
       setFormData({
@@ -57,6 +85,7 @@ const Contact: React.FC = () => {
         message: '',
       });
     } catch (err) {
+      console.error('❌ Erro no catch:', err);
       setError(err instanceof Error ? err.message : 'Erro ao enviar mensagem. Por favor, tente novamente.');
     } finally {
       setIsSubmitting(false);
