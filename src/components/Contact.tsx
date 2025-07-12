@@ -38,11 +38,11 @@ const Contact: React.FC = () => {
     try {
       // Preparar dados para o Supabase
       const contactData: CreateContactData = {
-        name: formData.name,
-        whatsapp: formData.whatsapp,
+      name: formData.name,
+      whatsapp: formData.whatsapp,
         website_url: formData.websiteUrl || undefined,
         site_type: formData.siteType,
-        message: formData.message,
+      message: formData.message,
       };
 
       // Salvar no banco de dados
@@ -233,7 +233,7 @@ const Contact: React.FC = () => {
               <div className="space-y-6 mb-8">
                 {contactInfo.map((item, index) => (
                   <a 
-                    key={index}
+                    key={index} 
                     href={item.link}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -253,7 +253,7 @@ const Contact: React.FC = () => {
                   </a>
                 ))}
               </div>
-
+              
               <div className="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
                 <h4 className="font-semibold text-neutral-900 dark:text-white mb-2">
                   Horário de atendimento:
@@ -271,8 +271,8 @@ const Contact: React.FC = () => {
 
         {/* Feedback Messages */}
         {(isSubmitted || error) && (
-          <motion.div 
-            ref={feedbackRef}
+        <motion.div 
+          ref={feedbackRef}
             className="mt-8 text-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -287,8 +287,8 @@ const Contact: React.FC = () => {
                   Mensagem enviada com sucesso! Em breve entraremos em contato.
                 </span>
               </div>
-            )}
-            {error && (
+      )}
+      {error && (
               <div className="inline-flex items-center px-6 py-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
                 <svg className="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -298,8 +298,8 @@ const Contact: React.FC = () => {
                 </span>
               </div>
             )}
-          </motion.div>
-        )}
+        </motion.div>
+      )}
       </div>
     </section>
   );
