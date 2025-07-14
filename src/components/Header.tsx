@@ -1,22 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-scroll';
-import { Link as RouterLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Code, Menu, X, BarChart3 } from 'lucide-react';
+import { Code, Menu, X } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
-import { storageService } from '../services/storage';
 
 const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
-
-  useEffect(() => {
-    setIsLoggedIn(storageService.isAdminLoggedIn());
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -78,15 +71,6 @@ const Header: React.FC = () => {
               {item.name}
             </Link>
           ))}
-          {isLoggedIn && (
-            <RouterLink
-              to="/dashboard"
-              className="flex items-center text-muted hover:text-primary font-medium transition-colors"
-            >
-              <BarChart3 className="h-4 w-4 mr-1" />
-              Dashboard
-            </RouterLink>
-          )}
           <ThemeToggle />
           <Link
             to="contact"
@@ -137,16 +121,6 @@ const Header: React.FC = () => {
                 {item.name}
               </Link>
             ))}
-            {isLoggedIn && (
-              <RouterLink
-                to="/dashboard"
-                className="flex items-center text-muted hover:text-primary py-2 font-medium"
-                onClick={closeMenu}
-              >
-                <BarChart3 className="h-4 w-4 mr-1" />
-                Dashboard
-              </RouterLink>
-            )}
             <Link
               to="contact"
               spy={true}
